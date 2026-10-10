@@ -1,5 +1,5 @@
 <?php
-require_once 'config/auth.php';
+require_once __DIR__ . '/config/auth.php';
 
 // Redirect if already logged in
 if ($auth->isLoggedIn()) {

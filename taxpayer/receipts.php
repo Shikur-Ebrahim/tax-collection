@@ -1,9 +1,9 @@
 <?php
-require_once '../config/auth.php';
+require_once __DIR__ . '/../config/auth.php';
 $auth->requireRole('taxpayer');
 $pageTitle = 'My Tax Receipts';
 $sidebarRole = 'taxpayer';
-require_once '../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
 $db = Database::getInstance();
 $userId = $auth->getUserId();
@@ -11,7 +11,7 @@ $taxpayer = $db->fetchOne('SELECT * FROM taxpayers WHERE user_id = ?', [$userId]
 
 if (!$taxpayer) {
     echo "<div class='alert alert-warning'>Not registered.</div>";
-    require_once '../includes/footer.php';
+    require_once __DIR__ . '/../includes/footer.php';
     exit;
 }
 
@@ -131,4 +131,4 @@ $receipts = $db->fetchAll("
 </div>
 <?php endforeach; ?>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

@@ -1,9 +1,9 @@
 <?php
-require_once '../config/auth.php';
+require_once __DIR__ . '/../config/auth.php';
 $auth->requireRole('taxpayer');
 $pageTitle = 'My Profile';
 $sidebarRole = 'taxpayer';
-require_once '../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
 $db = Database::getInstance();
 $userId = $auth->getUserId();
@@ -103,4 +103,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     </div>
 </div>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

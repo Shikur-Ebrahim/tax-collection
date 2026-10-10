@@ -1,9 +1,9 @@
 <?php
-require_once '../config/auth.php';
+require_once __DIR__ . '/../config/auth.php';
 $auth->requireRole('taxpayer');
 $pageTitle = 'Taxpayer Dashboard';
 $sidebarRole = 'taxpayer';
-require_once '../includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 
 $db = Database::getInstance();
 $userId = $auth->getUserId();
@@ -11,7 +11,7 @@ $taxpayer = $db->fetchOne('SELECT * FROM taxpayers WHERE user_id = ?', [$userId]
 
 if (!$taxpayer) {
     echo "<div class='alert alert-warning'><span class='alert-icon'>⚠️</span> <div><strong>Not Registered</strong><br>You haven't completed your taxpayer registration yet. Please contact staff to complete your registration.</div></div>";
-    require_once '../includes/footer.php';
+    require_once __DIR__ . '/../includes/footer.php';
     exit;
 }
 
@@ -133,4 +133,4 @@ $news = $db->fetchAll("SELECT * FROM news WHERE is_published = true ORDER BY pub
     </div>
 </div>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
