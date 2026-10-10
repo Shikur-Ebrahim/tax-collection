@@ -4,8 +4,8 @@
 // Bure Town Tax Collection Management System
 // ============================================================
 
-// Vercel Environment Variable OR Hardcoded Supabase URL
-$dbUrl = getenv('DATABASE_URL') ?: 'postgresql://postgres:Shikur%403828%40@db.bpgcpdzdwdxitmlwnshu.supabase.co:6543/postgres';
+// Vercel Environment Variable OR IPv4 Connection Pooler (Working for Vercel)
+$dbUrl = getenv('DATABASE_URL') ?: 'postgresql://postgres.bpgcpdzdwdxitmlwnshu:Shikur%403828%40@aws-0-eu-west-1.pooler.supabase.com:6543/postgres';
 
 $parsedUrl = parse_url($dbUrl);
 define('DB_HOST', $parsedUrl['host']);
