@@ -4,24 +4,15 @@
 // Bure Town Tax Collection Management System
 // ============================================================
 
-// Parse connection details from Vercel Environment Variable if available
-$dbUrl = getenv('DATABASE_URL');
+// Vercel Environment Variable OR Hardcoded Supabase URL
+$dbUrl = getenv('DATABASE_URL') ?: 'postgresql://postgres:Shikur%403828%40@db.bpgcpdzdwdxitmlwnshu.supabase.co:6543/postgres';
 
-if ($dbUrl) {
-    $parsedUrl = parse_url($dbUrl);
-    define('DB_HOST', $parsedUrl['host']);
-    define('DB_PORT', $parsedUrl['port'] ?? '6543'); // Default pooler port
-    define('DB_NAME', ltrim($parsedUrl['path'], '/'));
-    define('DB_USER', $parsedUrl['user']);
-    define('DB_PASS', $parsedUrl['pass']);
-} else {
-    // Fallback for local testing
-    define('DB_HOST', 'db.bpgcpdzdwdxitmlwnshu.supabase.co');
-    define('DB_PORT', '5432');
-    define('DB_NAME', 'postgres');
-    define('DB_USER', 'postgres');
-    define('DB_PASS', 'Shikur@3828@');
-}
+$parsedUrl = parse_url($dbUrl);
+define('DB_HOST', $parsedUrl['host']);
+define('DB_PORT', $parsedUrl['port'] ?? '6543');
+define('DB_NAME', ltrim($parsedUrl['path'], '/'));
+define('DB_USER', $parsedUrl['user']);
+define('DB_PASS', urldecode($parsedUrl['pass'])); // urldecode handles the %40
 
 // Application Settings
 define('APP_NAME', 'Bure Town Tax Collection Management System');
