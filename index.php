@@ -1,7 +1,7 @@
 <?php
 require_once 'config/database.php';
 $db = Database::getInstance();
-$newsItems = $db->fetchAll("SELECT * FROM news WHERE is_published = 1 ORDER BY published_at DESC LIMIT 3");
+$newsItems = $db->fetchAll("SELECT * FROM news WHERE is_published = true ORDER BY published_at DESC LIMIT 3");
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -1,0 +1,24 @@
+{
+  "name": "tax-collection-management-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shikur-Ebrahim/tax-collection.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Shikur-Ebrahim/tax-collection/issues"
+  },
+  "homepage": "https://github.com/Shikur-Ebrahim/tax-collection#readme",
+  "dependencies": {
+    "pg": "^8.23.1"
+  }
+}

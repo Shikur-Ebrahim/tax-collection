@@ -23,7 +23,7 @@ $lastPayment = $db->fetchOne("SELECT MAX(payment_date) as last_date FROM payment
 
 // Fetch recent records
 $recentRecords = $db->fetchAll("SELECT * FROM tax_records WHERE taxpayer_id = ? ORDER BY created_at DESC LIMIT 5", [$taxpayer['id']]);
-$news = $db->fetchAll("SELECT * FROM news WHERE is_published = 1 ORDER BY published_at DESC LIMIT 3");
+$news = $db->fetchAll("SELECT * FROM news WHERE is_published = true ORDER BY published_at DESC LIMIT 3");
 ?>
 
 <div class="stats-grid">
