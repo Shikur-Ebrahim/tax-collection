@@ -4,12 +4,24 @@
 // Bure Town Tax Collection Management System
 // ============================================================
 
-// Supabase PostgreSQL Connection
-define('DB_HOST', 'db.bpgcpdzdwdxitmlwnshu.supabase.co');
-define('DB_PORT', '5432');
-define('DB_NAME', 'postgres');
-define('DB_USER', 'postgres');
-define('DB_PASS', 'Shikur@3828@');
+// Parse connection details from Vercel Environment Variable if available
+$dbUrl = getenv('DATABASE_URL');
+
+if ($dbUrl) {
+    $parsedUrl = parse_url($dbUrl);
+    define('DB_HOST', $parsedUrl['host']);
+    define('DB_PORT', $parsedUrl['port'] ?? '6543'); // Default pooler port
+    define('DB_NAME', ltrim($parsedUrl['path'], '/'));
+    define('DB_USER', $parsedUrl['user']);
+    define('DB_PASS', $parsedUrl['pass']);
+} else {
+    // Fallback for local testing
+    define('DB_HOST', 'db.bpgcpdzdwdxitmlwnshu.supabase.co');
+    define('DB_PORT', '5432');
+    define('DB_NAME', 'postgres');
+    define('DB_USER', 'postgres');
+    define('DB_PASS', 'Shikur@3828@');
+}
 
 // Application Settings
 define('APP_NAME', 'Bure Town Tax Collection Management System');
@@ -54,33 +66,21 @@ class Database {
         return $this->pdo;
     }
 
-    /**
-     * Execute a query with prepared statements
-     */
     public function query(string $sql, array $params = []): PDOStatement {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt;
     }
 
-    /**
-     * Fetch a single row
-     */
     public function fetchOne(string $sql, array $params = []): ?array {
         $result = $this->query($sql, $params)->fetch();
         return $result ?: null;
     }
 
-    /**
-     * Fetch all rows
-     */
     public function fetchAll(string $sql, array $params = []): array {
         return $this->query($sql, $params)->fetchAll();
     }
 
-    /**
-     * Insert a record and return last insert ID
-     */
     public function insert(string $table, array $data): int {
         $cols = implode(', ', array_keys($data));
         $placeholders = implode(', ', array_fill(0, count($data), '?'));
@@ -89,9 +89,6 @@ class Database {
         return (int)$stmt->fetchColumn();
     }
 
-    /**
-     * Update records
-     */
     public function update(string $table, array $data, string $where, array $whereParams = []): int {
         $setParts = array_map(fn($col) => "{$col} = ?", array_keys($data));
         $sql = "UPDATE {$table} SET " . implode(', ', $setParts) . " WHERE {$where}";
@@ -99,17 +96,11 @@ class Database {
         return $this->query($sql, $params)->rowCount();
     }
 
-    /**
-     * Delete records
-     */
     public function delete(string $table, string $where, array $params = []): int {
         $sql = "DELETE FROM {$table} WHERE {$where}";
         return $this->query($sql, $params)->rowCount();
     }
 
-    /**
-     * Count records
-     */
     public function count(string $table, string $where = '1=1', array $params = []): int {
         $sql = "SELECT COUNT(*) as cnt FROM {$table} WHERE {$where}";
         $row = $this->fetchOne($sql, $params);
