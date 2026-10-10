@@ -28,7 +28,7 @@ class Auth {
             session_set_cookie_params([
                 'lifetime' => SESSION_LIFETIME,
                 'path'     => '/',
-                'secure'   => false,
+                'secure'   => true,
                 'httponly' => true,
                 'samesite' => 'Lax',
             ]);
@@ -38,12 +38,12 @@ class Auth {
 
     /**
      * Attempt login with username/password
+     * Uses 'role' text column directly (no JOIN needed)
      */
     public function login(string $username, string $password): array {
         $user = $this->db->fetchOne(
-            "SELECT u.*, r.role_name FROM users u 
-             JOIN roles r ON u.role_id = r.id 
-             WHERE (u.username = ? OR u.email = ?) AND u.status = 'active'",
+            "SELECT * FROM users
+             WHERE (username = ? OR email = ?) AND status = 'active'",
             [$username, $username]
         );
 
@@ -52,23 +52,25 @@ class Auth {
             return ['success' => false, 'message' => 'Invalid username or password.'];
         }
 
+        // Read role name directly from the 'role' column
+        $roleName = $user['role'] ?? 'taxpayer';
+
         // Update last login
         $this->db->update('users', ['last_login' => date('Y-m-d H:i:s')], 'id = ?', [$user['id']]);
 
         // Set session
-        $_SESSION['user_id']   = $user['id'];
-        $_SESSION['username']  = $user['username'];
-        $_SESSION['full_name'] = $user['full_name'];
-        $_SESSION['role']      = $user['role_name'];
-        $_SESSION['role_id']   = $user['role_id'];
-        $_SESSION['logged_in'] = true;
+        $_SESSION['user_id']    = $user['id'];
+        $_SESSION['username']   = $user['username'];
+        $_SESSION['full_name']  = $user['full_name'];
+        $_SESSION['role']       = $roleName;
+        $_SESSION['logged_in']  = true;
         $_SESSION['login_time'] = time();
 
         session_regenerate_id(true);
 
         $this->logAudit($user['id'], 'LOGIN_SUCCESS', 'auth', "User logged in: {$user['username']}");
 
-        return ['success' => true, 'role' => $user['role_name'], 'user' => $user];
+        return ['success' => true, 'role' => $roleName, 'user' => $user];
     }
 
     /**
@@ -107,18 +109,18 @@ class Auth {
     }
 
     /**
-     * Get current user data
+     * Get current user data (reads role directly from users table)
      */
     public function getUser(): ?array {
         if (!$this->isLoggedIn()) return null;
         return $this->db->fetchOne(
-            "SELECT u.*, r.role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?",
+            "SELECT * FROM users WHERE id = ?",
             [$_SESSION['user_id']]
         );
     }
 
     /**
-     * Require a specific role(s) or redirect
+     * Require a specific role(s) or redirect to login
      */
     public function requireRole(string|array $roles, string $redirect = '../login.php'): void {
         if (!$this->isLoggedIn()) {
@@ -163,7 +165,7 @@ class Auth {
     }
 
     /**
-     * Get dashboard URL by role
+     * Get dashboard URL by role name
      */
     public static function getDashboardUrl(string $role): string {
         return match($role) {
